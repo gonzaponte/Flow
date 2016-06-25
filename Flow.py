@@ -18,10 +18,11 @@ class Flow:
         self.msg  = Messenger( ID + '_msg', 3, stdout ) if msg is None else msg
         self.algs = list()
         self.data = dict()
+        self.pars = dict()
 
         self.msg( 'Debug', 'Flow instance created with ID ' + str(ID) )
 
-    def AddAlgorithm( self, algorithm ):
+    def AddAlgorithm( self, algorithm, **kwoptions ):
         '''
             Add algorithm to the list of algorithms to be executed. It also adds
             the algorithm ID to the  data dictionary to store its output.
@@ -29,6 +30,7 @@ class Flow:
         self.msg( 'Debug', 'Algorithm {0} has been added'.format(algorithm.ID) )
         self.algs.append( algorithm )
         self.data[ algorithm.ID ] = None
+        self.pars[ algorithm.ID ] = kwoptions
 
     def _Prepare( self ):
         '''
@@ -40,6 +42,7 @@ class Flow:
         for alg in self.algs:
             alg.msg  = self.msg
             alg.data = self.data
+            alg.pars = self.pars[ alg.ID ]
             alg.Begin()
 
     def _Loop( self, Nevts ):
@@ -50,7 +53,7 @@ class Flow:
             [ alg() for alg in self.algs ]
 
     def _End( self ):
-        [ alg.End() for alg in self.algs ]
+        map( Algorithm.End, self.algs )
 
     def Run( self, Nevts ):
         def GetTime():
