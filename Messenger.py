@@ -19,8 +19,11 @@ class Messenger:
     '''
     def __init__( self, ID = 'Msg', Verbosity = 3, SendTo = stdout ):
         self.ID = ID
-        self.VL = Verbosity if isinstance(Verbosity,int) else VerbosityDictionary(Verbosity)
+        self.VL = self.SetVerbosity(Verbosity)
         self.output = open(SendTo,'w') if isinstance(SendTo,str) else SendTo
+
+    def SetVerbosity( self, verbosity ):
+        self.VL = verbosity if isinstance(verbosity,int) else VerbosityDictionary(verbosity)
 
     def __call__( self, type, *messages ):
         '''
